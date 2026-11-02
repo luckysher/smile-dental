@@ -1,5 +1,422 @@
-(globalThis["TURBOPACK"] || (globalThis["TURBOPACK"] = [])).push([typeof document === "object" ? document.currentScript : undefined,
-(()=>{"use strict";return[
+(()=>{"use strict";(globalThis["TURBOPACK"] || (globalThis["TURBOPACK"] = [])).push([typeof document === "object" ? document.currentScript : undefined,
+"[project]/src/app/components/dentalChatbot.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>__TURBOPACK__default__export__
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$propertyCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/components/propertyCard.tsx [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$timeSlotsCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/components/timeSlotsCard.tsx [app-client] (ecmascript)");
+;
+var _s = __turbopack_context__.k.signature();
+;
+;
+;
+const quickQuestions = [
+    "Doctor specialization"
+];
+const DentalChatbot = ()=>{
+    _s();
+    const [isOpen, setIsOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const chatRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const [messages, setMessages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([
+        {
+            id: 1,
+            sender: "ai",
+            text: "Hi! 👋 Welcome to smile dental.\n " + "I'm your Smile Dental Assistant. I can help you find doctors, book appointments and answer your queries."
+        }
+    ]);
+    const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [isTyping, setIsTyping] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const propertyJsonToDetail = (props)=>{
+        let details = "";
+        for(let i = 0; i < props.length; i++){
+            const prop = props[i];
+            details += `Match ${i + 1}: (ID: ${prop['title'].toLowerCase().replaceAll(" ", "_")}_${prop['id']}) ${prop['description']} \n`;
+        }
+        return details;
+    };
+    const slotsJsonToDetail = (slotJson)=>{
+        let details = "available time slots are";
+        if (Object.keys(slotJson).length) {
+            details = ` Availble time slots are: ${Object.values(slotJson)}`;
+        }
+        return details;
+    };
+    const scrollToBottom = ()=>{
+        if (chatRef.current) {
+            chatRef.current?.scrollBy(0, chatRef.current?.scrollHeight + 200, {
+                behavior: 'smooth'
+            });
+        }
+    };
+    const sendMessage = async (messageText = input)=>{
+        const text = messageText.trim();
+        if (!text) return;
+        // Add user message
+        const userMessage = {
+            id: Date.now(),
+            sender: "user",
+            text
+        };
+        setMessages((prev)=>[
+                ...prev,
+                userMessage
+            ]);
+        setInput("");
+        setIsTyping(true);
+        scrollToBottom();
+        try {
+            // load chat history
+            const chatHistoryData = localStorage.getItem('chatHistory');
+            const chatHistory = JSON.parse(chatHistoryData || "[]");
+            const response = await fetch(`${("TURBOPACK compile-time value", "http://localhost:5000")}/api/chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    query: text,
+                    history: chatHistory
+                })
+            });
+            const resJson = await response.json();
+            const matchedProperties = resJson.matched_properties || [];
+            const timeSlots = resJson.time_slots || {};
+            const aiResponse = (resJson.response + (matchedProperties.length > 0 ? "**Found some properties matches for you. Have a look at the following properties:** " : "") || "")?.replace("##MATCHED_LISTING##", "");
+            aiResponse.replace("##AVAILABLE_SLOTS##", "");
+            let contentForHistory = aiResponse;
+            if (matchedProperties.length) {
+                contentForHistory = ("TURBOPACK compile-time truthy", 1) ? (resJson.response || "")?.replace("##MATCHED_LISTING##", propertyJsonToDetail(matchedProperties)) : "TURBOPACK unreachable";
+            }
+            if (Object.keys(timeSlots).length) {
+                contentForHistory = ("TURBOPACK compile-time truthy", 1) ? (resJson.response || "")?.replace("##AVAILABLE_SLOTS##", slotsJsonToDetail(timeSlots)) : "TURBOPACK unreachable";
+            }
+            // save chat history
+            const newChatHistory = [
+                {
+                    role: "user",
+                    content: text
+                },
+                {
+                    role: "assistant",
+                    content: contentForHistory
+                }
+            ].concat(chatHistory);
+            localStorage.setItem('chatHistory', JSON.stringify(newChatHistory));
+            console.log("saved chat history");
+            //await new Promise((resolve) => setTimeout(resolve, 1000));
+            const aiMessage = {
+                id: Date.now() + 1,
+                sender: "ai",
+                text: aiResponse,
+                matchedProperties: matchedProperties,
+                timeSlots: timeSlots
+            };
+            setMessages((prev)=>[
+                    ...prev,
+                    aiMessage
+                ]);
+        } catch (error) {
+            console.log(error);
+            setMessages((prev)=>[
+                    ...prev,
+                    {
+                        id: Date.now() + 1,
+                        sender: "ai",
+                        text: "Sorry, something went wrong. Please try again."
+                    }
+                ]);
+        } finally{
+            setIsTyping(false);
+            scrollToBottom();
+        }
+    };
+    const handleKeyDown = (e)=>{
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    };
+    const handleBotClick = ()=>{
+        console.log("button click");
+        setIsOpen(true);
+    };
+    const renderMarkdownBold = (text)=>{
+        text = text.replace("Short description:", "Check out following listing:");
+        const markedText = text.split('**').length > 1 ? text.split('**') : text.split('*').length > 1 ? text.split('*') : text.split("**");
+        return markedText.map((part, i)=>{
+            return i % 2 === 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                children: part
+            }, i, false, {
+                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                lineNumber: 151,
+                columnNumber: 28
+            }, ("TURBOPACK compile-time value", void 0)) : part;
+        });
+    };
+    const renderAiResponse = (aiGeneratedText)=>{
+        return aiGeneratedText.split("\n").map((lineText, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                children: renderMarkdownBold(lineText)
+            }, i, false, {
+                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                lineNumber: 159,
+                columnNumber: 16
+            }, ("TURBOPACK compile-time value", void 0)));
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+        children: [
+            !isOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                className: "chat-toggle",
+                type: "button",
+                onClick: handleBotClick,
+                "aria-label": isOpen ? "Close dental assistant" : "Open dental assistant",
+                "aria-expanded": isOpen,
+                children: isOpen ? "✕" : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                    className: "bot-icon",
+                    src: "./chatbot.png"
+                }, void 0, false, {
+                    fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                    lineNumber: 176,
+                    columnNumber: 27
+                }, ("TURBOPACK compile-time value", void 0))
+            }, void 0, false, {
+                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                lineNumber: 169,
+                columnNumber: 9
+            }, ("TURBOPACK compile-time value", void 0)),
+            isOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "chat-panel",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "chat-header",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "chat-avatar",
+                                children: "🦷"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                lineNumber: 187,
+                                columnNumber: 15
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                        children: "Dental Assistant"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                        lineNumber: 189,
+                                        columnNumber: 17
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
+                                        children: "How can we help you?"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                        lineNumber: 190,
+                                        columnNumber: 17
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                lineNumber: 188,
+                                columnNumber: 15
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                type: "button",
+                                className: "chat-close",
+                                onClick: ()=>setIsOpen(false),
+                                "aria-label": "Close chat",
+                                children: "✕"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                lineNumber: 192,
+                                columnNumber: 15
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                        lineNumber: 186,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "chat-messages",
+                        ref: chatRef,
+                        children: [
+                            messages.map((message)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: `message-row ${message.sender}`,
+                                    children: [
+                                        message.sender === "ai" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "small-avatar",
+                                            children: "🦷"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                            lineNumber: 210,
+                                            columnNumber: 19
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "message-content",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "message-bubble",
+                                                    children: [
+                                                        message.sender === "ai" ? renderAiResponse(message.text) : message.text,
+                                                        Object.keys(message.timeSlots || {}).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "property-results",
+                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$timeSlotsCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                                timeSlots: message.timeSlots
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                                lineNumber: 219,
+                                                                columnNumber: 25
+                                                            }, ("TURBOPACK compile-time value", void 0))
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                            lineNumber: 218,
+                                                            columnNumber: 23
+                                                        }, ("TURBOPACK compile-time value", void 0))
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                    lineNumber: 214,
+                                                    columnNumber: 19
+                                                }, ("TURBOPACK compile-time value", void 0)),
+                                                (message.matchedProperties || []).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "property-results",
+                                                    children: (message.matchedProperties || []).map((property, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$propertyCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                                            property: property
+                                                        }, i, false, {
+                                                            fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                            lineNumber: 228,
+                                                            columnNumber: 25
+                                                        }, ("TURBOPACK compile-time value", void 0)))
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                    lineNumber: 226,
+                                                    columnNumber: 21
+                                                }, ("TURBOPACK compile-time value", void 0))
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                            lineNumber: 213,
+                                            columnNumber: 17
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    ]
+                                }, message.id, true, {
+                                    fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                    lineNumber: 205,
+                                    columnNumber: 15
+                                }, ("TURBOPACK compile-time value", void 0))),
+                            isTyping && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "message-row ai",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "small-avatar",
+                                        children: "🦷"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                        lineNumber: 240,
+                                        columnNumber: 17
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "typing-indicator",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
+                                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                lineNumber: 243,
+                                                columnNumber: 19
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
+                                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                lineNumber: 244,
+                                                columnNumber: 19
+                                            }, ("TURBOPACK compile-time value", void 0)),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
+                                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                                lineNumber: 245,
+                                                columnNumber: 19
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                        lineNumber: 242,
+                                        columnNumber: 17
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                lineNumber: 239,
+                                columnNumber: 15
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                        lineNumber: 203,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "chat-input-container",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                                value: input,
+                                onChange: (e)=>setInput(e.target.value),
+                                onKeyDown: handleKeyDown,
+                                placeholder: "Ask about properties...",
+                                rows: 1
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                lineNumber: 265,
+                                columnNumber: 13
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                className: "send-button",
+                                onClick: ()=>sendMessage(),
+                                disabled: !input.trim() || isTyping,
+                                children: "➤"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                                lineNumber: 273,
+                                columnNumber: 13
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                        lineNumber: 264,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "chat-footer",
+                        children: "AI can make mistakes. Please verify property details."
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                        lineNumber: 282,
+                        columnNumber: 11
+                    }, ("TURBOPACK compile-time value", void 0))
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/components/dentalChatbot.tsx",
+                lineNumber: 184,
+                columnNumber: 9
+            }, ("TURBOPACK compile-time value", void 0))
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/app/components/dentalChatbot.tsx",
+        lineNumber: 165,
+        columnNumber: 5
+    }, ("TURBOPACK compile-time value", void 0));
+};
+_s(DentalChatbot, "vONM3OA5yO6w+rKqB23GMwP/s7E=");
+_c = DentalChatbot;
+const __TURBOPACK__default__export__ = DentalChatbot;
+var _c;
+__turbopack_context__.k.register(_c, "DentalChatbot");
+if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
+    __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
+}
+}),
 "[project]/src/app/components/propertyCard.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
@@ -1510,33 +1927,12 @@ function Home() {
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "chat-widget",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$dentalChatbot$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 471,
-                        columnNumber: 10
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        className: "chat-toggle",
-                        type: "button",
-                        onClick: ()=>setChatOpen(!chatOpen),
-                        "aria-label": chatOpen ? "Close dental assistant" : "Open dental assistant",
-                        "aria-expanded": chatOpen,
-                        children: chatOpen ? "✕" : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
-                            className: "bot-icon",
-                            src: "./chatbot.png"
-                        }, void 0, false, {
-                            fileName: "[project]/src/app/page.tsx",
-                            lineNumber: 524,
-                            columnNumber: 29
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 517,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$dentalChatbot$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                    fileName: "[project]/src/app/page.tsx",
+                    lineNumber: 471,
+                    columnNumber: 10
+                }, this)
+            }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
                 lineNumber: 469,
                 columnNumber: 7
@@ -1556,13 +1952,6 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }
 }),
-]})(),
-"[project]/src/app/components/dentalChatbot.tsx [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
-
-var e = new Error("Could not parse module '[project]/src/app/components/dentalChatbot.tsx'\n\nExpected '</', got 'ident'");
-e.code = 'MODULE_UNPARSABLE';
-throw e;
-}),
-]);
+]);})()
 
 //# sourceMappingURL=src_app_1hzi1xlv1a7jq._.js.map
