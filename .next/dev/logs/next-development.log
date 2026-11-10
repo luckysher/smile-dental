@@ -1,9 +1,14 @@
-{"timestamp":"00:00:26.583","source":"Server","level":"WARN","message":"⚠ Slow filesystem detected. The benchmark took 361ms. If /home/ldev/work/smile-dental/.next/dev is a network drive, consider moving it to a local folder.\nSee more: https://nextjs.org/docs/app/guides/local-development"}
-{"timestamp":"00:00:29.730","source":"Server","level":"LOG","message":"- Cache Components enabled"}
-{"timestamp":"00:00:29.730","source":"Server","level":"LOG","message":"- Partial Prefetching enabled"}
-{"timestamp":"00:00:29.731","source":"Server","level":"LOG","message":"- Experiments (use with caution):"}
-{"timestamp":"00:00:29.732","source":"Server","level":"LOG","message":"  ✓ agentFeedback"}
-{"timestamp":"00:00:29.732","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:01:24.935","source":"Server","level":"LOG","message":"○ Compiling / ..."}
-{"timestamp":"00:01:59.739","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
-{"timestamp":"00:02:07.186","source":"Browser","level":"LOG","message":"button click"}
+{"timestamp":"00:00:53.747","source":"Server","level":"WARN","message":"⚠ Slow filesystem detected. The benchmark took 294ms. If /home/ldev/work/smile-dental/.next/dev is a network drive, consider moving it to a local folder.\nSee more: https://nextjs.org/docs/app/guides/local-development"}
+{"timestamp":"00:00:59.988","source":"Server","level":"LOG","message":"- Cache Components enabled"}
+{"timestamp":"00:00:59.989","source":"Server","level":"LOG","message":"- Partial Prefetching enabled"}
+{"timestamp":"00:00:59.990","source":"Server","level":"LOG","message":"- Experiments (use with caution):"}
+{"timestamp":"00:00:59.991","source":"Server","level":"LOG","message":"  ✓ agentFeedback"}
+{"timestamp":"00:00:59.991","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:08:28.591","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:08:47.954","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:10:06.904","source":"Browser","level":"LOG","message":"button click"}
+{"timestamp":"02:33:36.908","source":"Browser","level":"LOG","message":"saved chat history"}
+{"timestamp":"02:34:35.138","source":"Browser","level":"LOG","message":"saved chat history"}
+{"timestamp":"02:36:11.735","source":"Browser","level":"LOG","message":"saved chat history"}
+{"timestamp":"02:36:29.651","source":"Browser","level":"LOG","message":"saved chat history"}
+{"timestamp":"02:41:21.347","source":"Browser","level":"LOG","message":"saved chat history"}
