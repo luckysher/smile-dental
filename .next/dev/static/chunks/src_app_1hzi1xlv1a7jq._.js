@@ -49,7 +49,7 @@ const DentalChatbot = ()=>{
     };
     const scrollToBottom = ()=>{
         if (chatRef.current) {
-            chatRef.current?.scrollBy(0, chatRef.current?.scrollHeight + 200, {
+            chatRef.current?.scrollBy(0, chatRef.current?.scrollHeight + 1000, {
                 behavior: 'smooth'
             });
         }
@@ -69,7 +69,7 @@ const DentalChatbot = ()=>{
             ]);
         setInput("");
         setIsTyping(true);
-        scrollToBottom();
+        setTimeout(scrollToBottom, 200);
         try {
             // load chat history
             const chatHistoryData = localStorage.getItem('chatHistory');
@@ -364,7 +364,7 @@ const DentalChatbot = ()=>{
                                 value: input,
                                 onChange: (e)=>setInput(e.target.value),
                                 onKeyDown: handleKeyDown,
-                                placeholder: "Ask about properties...",
+                                placeholder: "Ask about disease, doctor suggestion etc.",
                                 rows: 1
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/dentalChatbot.tsx",

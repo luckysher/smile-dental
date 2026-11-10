@@ -1489,8 +1489,8 @@ section[id] {
   background: #fff;
   border-radius: 18px;
   flex-direction: column;
-  width: min(365px, 100vw - 32px);
-  height: min(470px, 100dvh - 120px);
+  width: min(425px, 100vw - 32px);
+  height: min(500px, 100dvh - 120px);
   margin-bottom: 14px;
   display: flex;
   overflow: hidden;
